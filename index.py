@@ -1,5 +1,6 @@
 import pygame
 # pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org pygame
+from random import *
 
 pygame.init()
 screen = pygame.display.set_mode((400, 300))
@@ -9,6 +10,10 @@ direction = "RIGHT"
 x = 10
 y = 10
 
+xObs = randrange(0, 400, 10)
+yObs = randrange(0, 300, 10)
+colorObs = (255, 0, 0)
+
 clock = pygame.time.Clock()
 
 colorSnake = (255,255,255)
@@ -16,7 +21,7 @@ colorSnake = (255,255,255)
 tamanho = 10
 
 def desenha(screen, color, x,y,l,a):
-    pygame.draw.rect(screen, colorSnake, (x,y, l, a))
+    pygame.draw.rect(screen, color, (x,y, l, a))
 
 while not done:
     for event in pygame.event.get():
@@ -37,9 +42,19 @@ while not done:
 
     tamanho += 10
 
-    screen.fill((0, 0, 0))   
+    screen.fill((0, 0, 0))
 
-    desenha(screen, colorSnake, x, y, 10, 10)  
+    if (x, y) == (xObs, yObs):
+        xObs = randrange(0, 400, 10)
+        yObs = randrange(0, 300, 10)
+    
+    if x == 400 or x == 0:
+        done = True
+    if y == 300 or y == 0:
+        done = True
 
-    clock.tick(45)
+    desenha(screen, colorSnake, x, y, 10, 10)
+    desenha(screen, colorObs, xObs, yObs, 10, 10)
+
+    clock.tick(20)
     pygame.display.update()
