@@ -1,4 +1,5 @@
 import pygame
+
 # pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org pygame
 from random import *
 
@@ -9,19 +10,25 @@ done = False
 direction = "RIGHT"
 x = 10
 y = 10
+colorSnake = (255, 255, 255)
+snakeBody = [(10, 10), (10, 20), (10, 30)]
+snake = pygame.Surface((x, y))
+snake.fill(colorSnake)
 
-xObs = randrange(0, 400, 10)
-yObs = randrange(0, 300, 10)
-colorObs = (255, 0, 0)
+xEnemy = randrange(0, 400, 10)
+yEnemy = randrange(0, 300, 10)
+colorEnemy = (255, 0, 0)
+enemy = pygame.Surface((10, 10))
+enemy.fill(colorEnemy)
 
 clock = pygame.time.Clock()
 
-colorSnake = (255,255,255)
 
-tamanho = 10
+def updateEnemy():
+    global xEnemy, yEnemy
+    xEnemy = randrange(0, 400, 10)
+    yEnemy = randrange(0, 300, 10)
 
-def desenha(screen, color, x,y,l,a):
-    pygame.draw.rect(screen, color, (x,y, l, a))
 
 while not done:
     for event in pygame.event.get():
@@ -30,31 +37,46 @@ while not done:
 
     pressed = pygame.key.get_pressed()
 
-    if pressed[pygame.K_UP]: direction = "UP"
-    if pressed[pygame.K_DOWN]: direction = "DOWN"
-    if pressed[pygame.K_LEFT]: direction = "LEFT"
-    if pressed[pygame.K_RIGHT]: direction = "RIGHT"
+    if pressed[pygame.K_UP]:
+        direction = "UP"
+    if pressed[pygame.K_DOWN]:
+        direction = "DOWN"
+    if pressed[pygame.K_LEFT]:
+        direction = "LEFT"
+    if pressed[pygame.K_RIGHT]:
+        direction = "RIGHT"
 
-    if direction=="UP": y -= 10
-    if direction=="DOWN": y += 10
-    if direction=="LEFT": x -= 10
-    if direction=="RIGHT": x += 10
+    if direction == "UP":
+        snakeBody[0] = (snakeBody[0][0], snakeBody[0][1] - 10)
+    if direction == "DOWN":
+        snakeBody[0] = (snakeBody[0][0], snakeBody[0][1] + 10)
+    if direction == "LEFT":
+        snakeBody[0] = (snakeBody[0][0] - 10, snakeBody[0][1])
+    if direction == "RIGHT":
+        snakeBody[0] = (snakeBody[0][0] + 10, snakeBody[0][1])
 
-    tamanho += 10
+    for i in range(len(snakeBody) - 1, 0, -1):
+        snakeBody[i] = snakeBody[i - 1]
 
     screen.fill((0, 0, 0))
 
-    if (x, y) == (xObs, yObs):
-        xObs = randrange(0, 400, 10)
-        yObs = randrange(0, 300, 10)
-    
-    if x == 400 or x == 0:
+    if (snakeBody[0][0], snakeBody[0][1]) == (xEnemy, yEnemy):
+        updateEnemy()
+        newPeace = (
+            snakeBody[len(snakeBody) - 1][0],
+            snakeBody[len(snakeBody) - 1][1] + 10,
+        )
+        snakeBody.append(newPeace)
+
+    if snakeBody[0][0] == 390 or snakeBody[0][0] == 0:
         done = True
-    if y == 300 or y == 0:
+    if snakeBody[0][1] == 290 or snakeBody[0][1] == 0:
         done = True
 
-    desenha(screen, colorSnake, x, y, 10, 10)
-    desenha(screen, colorObs, xObs, yObs, 10, 10)
+    for pos in snakeBody:
+        screen.blit(snake, pos)
 
-    clock.tick(20)
+    screen.blit(enemy, (xEnemy, yEnemy))
+
+    clock.tick(15)
     pygame.display.update()
