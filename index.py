@@ -4,7 +4,9 @@ import pygame
 from random import *
 
 pygame.init()
-screen = pygame.display.set_mode((400, 300))
+x = 400
+y = 300
+screen = pygame.display.set_mode((x, y))
 done = False
 
 direction = "RIGHT"
@@ -20,6 +22,9 @@ yEnemy = randrange(0, 300, 10)
 colorEnemy = (255, 0, 0)
 enemy = pygame.Surface((10, 10))
 enemy.fill(colorEnemy)
+
+font = pygame.font.Font("freesansbold.ttf", 14)
+points = 0
 
 clock = pygame.time.Clock()
 
@@ -61,6 +66,7 @@ while not done:
     screen.fill((0, 0, 0))
 
     if (snakeBody[0][0], snakeBody[0][1]) == (xEnemy, yEnemy):
+        points += 10
         updateEnemy()
         newPeace = (
             snakeBody[len(snakeBody) - 1][0],
@@ -77,6 +83,8 @@ while not done:
         screen.blit(snake, pos)
 
     screen.blit(enemy, (xEnemy, yEnemy))
+    screen.blit(font.render(str(points), True, (0, 255, 0)), (375, 7))
 
     clock.tick(15)
     pygame.display.update()
+    pygame.display.set_caption("Snake")
